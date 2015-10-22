@@ -1,0 +1,11 @@
+# General
+.DS_Store
+*.zip
+*.raw
+*.log
+
+# Code Composer
+.settings
+.launches
+Debug
+targetConfigs
