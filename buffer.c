@@ -46,13 +46,58 @@
 #include <stdint.h>
 #include "buffer.h"
 
-//*****************************************************************************
-//
-//! Configures a message object in the UMSG controller.
-//!
-//! \return None.
-//
-//*****************************************************************************
+void populateMsgObject(tMsgObject* msgObj, uint32_t msgID, uint8_t* msgData, uint32_t len)
+{
+	uint32_t i;
+
+	msgObj->ui32MsgID = msgID;
+	for(i = 0; i < len; i++)
+	{
+		msgObj->pui8MsgData[i] = msgData[i];
+	}
+}
+
+void initMsgBuffer(tMsgBuffer* msgBuf, tMsgObject* bufData, const uint64_t bufSz)
+{
+	msgBuf->writeIdx = 0;
+	msgBuf->readIdx = 0;
+	msgBuf->bufSz = bufSz;
+	msgBuf->msgBuf = bufData;
+}
+
+void pushMsgToBuf(tMsgObject msg, tMsgBuffer* buf)
+{
+	// TODO: need logic here to make sure we didn't overwrite unread data
+	// TODO!!!
+
+	// push the data into an offset based on the actual size of the buffer
+	buf->msgBuf[buf->writeIdx % buf->bufSz] = msg;
+	buf->writeIdx++;
+}
+
+tMsgObject popMsgFromBuf(tMsgBuffer* buf)
+{
+	// TODO: need logic here to make sure we don't read past current writeIdx (and would be getting stale data)
+	// TODO!!!
+
+	// pop data from an offset based on the actual size of the buffer
+	return buf->msgBuf[buf->readIdx++ % buf->bufSz];
+}
+
+extern uint64_t getBufCount(tMsgBuffer* buf)
+{
+	// NOTE: overwrite checking logic called for in pushMsgToBuf()
+	// NOTE: will allow this to be a straight subtraction, because
+	// NOTE: these two indices should never be farther apart than bufSz
+	return (buf->writeIdx - buf->readIdx);
+}
+
+bool isBufEmpty(tMsgBuffer* buf)
+{
+	uint64_t tempCount = getBufCount(buf);
+	return 0 == tempCount;
+}
+
 
 //*****************************************************************************
 //

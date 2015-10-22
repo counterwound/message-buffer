@@ -56,6 +56,8 @@ extern "C"
 {
 #endif
 
+#include <stdbool.h>
+#include <stdint.h>
 
 //*****************************************************************************
 //
@@ -73,15 +75,53 @@ typedef struct
     //
     //! This is a pointer to the message object's data.
     //
-    uint8_t *pui8MsgData;
+    uint8_t pui8MsgData[8];
 }
 tMsgObject;
+
+//*****************************************************************************
+//
+//! Fill data and MsgID, given the raw data
+//
+//*****************************************************************************
+
+void populateMsgObject(tMsgObject* msgObj, uint32_t msgID, uint8_t* msgData, uint32_t len);
+
+//*****************************************************************************
+//
+//! The structure to represent and track contents of a buffer of messages
+//
+//*****************************************************************************
+
+typedef struct
+{
+    uint64_t writeIdx;
+    uint64_t readIdx;
+    uint64_t bufSz;
+    tMsgObject* msgBuf;
+}
+tMsgBuffer;
+
+//*****************************************************************************
+//
+//! Initialize buffer contents
+//
+//*****************************************************************************
+
+extern void initMsgBuffer(tMsgBuffer* msgBuf, tMsgObject* bufData, const uint64_t bufSz);
+
 
 //*****************************************************************************
 //
 // API Function prototypes
 //
 //*****************************************************************************
+
+extern void pushMsgToBuf(tMsgObject msg, tMsgBuffer* buf);
+extern tMsgObject popMsgFromBuf(tMsgBuffer* buf);
+extern uint64_t getBufCount(tMsgBuffer* buf);
+extern bool isBufEmpty(tMsgBuffer* buf);
+
 extern void BufferPush(tMsgObject *psMsgObject);
 extern void BufferPull(tMsgObject *psMsgObject);
 //extern uint32_t BufferStatusGet(tMsgSts eStatus);
