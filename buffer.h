@@ -110,7 +110,6 @@ tMsgBuffer;
 
 extern void initMsgBuffer(tMsgBuffer* msgBuf, tMsgObject* bufData, const uint64_t bufSz);
 
-
 //*****************************************************************************
 //
 // API Function prototypes
@@ -121,10 +120,6 @@ extern void pushMsgToBuf(tMsgObject msg, tMsgBuffer* buf);
 extern tMsgObject popMsgFromBuf(tMsgBuffer* buf);
 extern uint64_t getBufCount(tMsgBuffer* buf);
 extern bool isBufEmpty(tMsgBuffer* buf);
-
-extern void BufferPush(tMsgObject *psMsgObject);
-extern void BufferPull(tMsgObject *psMsgObject);
-//extern uint32_t BufferStatusGet(tMsgSts eStatus);
 
 //*****************************************************************************
 //

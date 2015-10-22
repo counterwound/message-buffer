@@ -71,8 +71,7 @@ void pushMsgToBuf(tMsgObject msg, tMsgBuffer* buf)
 	// TODO!!!
 
 	// push the data into an offset based on the actual size of the buffer
-	buf->msgBuf[buf->writeIdx % buf->bufSz] = msg;
-	buf->writeIdx++;
+	buf->msgBuf[buf->writeIdx++ % buf->bufSz] = msg;
 }
 
 tMsgObject popMsgFromBuf(tMsgBuffer* buf)
