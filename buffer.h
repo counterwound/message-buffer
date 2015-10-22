@@ -56,10 +56,33 @@ extern "C"
 {
 #endif
 
+//*****************************************************************************
+//
+// Miscellaneous defines for Buffer status
+//
+//*****************************************************************************
 
 //*****************************************************************************
 //
-//! The structure used for encapsulating all the items associated with a UART
+// These are the flags used by the tUARTMsgObject.ui32Flags value when calling
+// the UARTMessageSet() and UARTMessageGet() functions.
+//
+//*****************************************************************************
+
+//
+//! This indicates that a message object has no flags set.
+//
+#define BUF_OBJ_NO_FLAGS        0x00000000
+
+//
+//! This indicates that data was lost since this message object was last
+//! read.
+//
+#define BUF_OBJ_DATA_LOST       0x00000100
+
+//*****************************************************************************
+//
+//! The structure used for encapsulating all the items associated with a
 //! message object
 //
 //*****************************************************************************
@@ -73,18 +96,54 @@ typedef struct
     //
     //! This is a pointer to the message object's data.
     //
-    uint8_t *pui8MsgData;
+    uint8_t pui8MsgData[8];
 }
 tMsgObject;
+
+//*****************************************************************************
+//
+//! The structure used for encapsulating all the items associated with Buffer
+//! object
+//
+//*****************************************************************************
+typedef struct
+{
+    //
+    //! The read index
+    //
+    uint32_t ui32BufRead;
+
+    //
+	//! The write index
+	//
+	uint32_t ui32BufWrite;
+
+	//
+	//! This value is the number of message objects in the buffer.
+	//
+	uint32_t ui32BufLen;
+
+    //
+    //! This value holds various status flags and settings specified by
+    //! tMsgObject.
+    //
+    uint32_t ui32Flags;
+
+    //
+    //! This is a pointer to the message object's data.
+    //
+	tMsgObject *sMsgObject;
+}
+tBufObject;
 
 //*****************************************************************************
 //
 // API Function prototypes
 //
 //*****************************************************************************
-extern void BufferPush(tMsgObject *psMsgObject);
-extern void BufferPull(tMsgObject *psMsgObject);
-//extern uint32_t BufferStatusGet(tMsgSts eStatus);
+extern void BufferPush(tBufObject sBufObject, tMsgObject *sMsgObject);
+extern void BufferPull(tBufObject sBufObject, tMsgObject *sMsgObject);
+extern bool BufferIsEmpty(tBufObject sBufObject);
 
 //*****************************************************************************
 //
