@@ -96,7 +96,7 @@ typedef struct
     //
     //! This is a pointer to the message object's data.
     //
-    uint8_t pui8MsgData[8];
+    uint8_t ui8MsgData[8];
 }
 tMsgObject;
 
