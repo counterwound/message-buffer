@@ -67,8 +67,10 @@ void initMsgBuffer(tMsgBuffer* msgBuf, tMsgObject* bufData, const uint64_t bufSz
 
 void pushMsgToBuf(tMsgObject msg, tMsgBuffer* buf)
 {
-	// TODO: need logic here to make sure we didn't overwrite unread data
-	// TODO!!!
+	if(isBufFull(buf))
+	{
+		// TODO: error?
+	}
 
 	// push the data into an offset based on the actual size of the buffer
 	buf->msgBuf[buf->writeIdx++ % buf->bufSz] = msg;
@@ -76,8 +78,10 @@ void pushMsgToBuf(tMsgObject msg, tMsgBuffer* buf)
 
 tMsgObject popMsgFromBuf(tMsgBuffer* buf)
 {
-	// TODO: need logic here to make sure we don't read past current writeIdx (and would be getting stale data)
-	// TODO!!!
+	if(isBufEmpty(buf))
+	{
+		// TODO: error?
+	}
 
 	// pop data from an offset based on the actual size of the buffer
 	return buf->msgBuf[buf->readIdx++ % buf->bufSz];
@@ -85,16 +89,18 @@ tMsgObject popMsgFromBuf(tMsgBuffer* buf)
 
 extern uint64_t getBufCount(tMsgBuffer* buf)
 {
-	// NOTE: overwrite checking logic called for in pushMsgToBuf()
-	// NOTE: will allow this to be a straight subtraction, because
-	// NOTE: these two indices should never be farther apart than bufSz
 	return (buf->writeIdx - buf->readIdx);
 }
 
 bool isBufEmpty(tMsgBuffer* buf)
 {
-	uint64_t tempCount = getBufCount(buf);
-	return 0 == tempCount;
+	return (0 == getBufCount(buf));
+}
+
+bool isBufFull(tMsgBuffer* buf)
+{
+	return (getBufCount(buf) >= buf->bufSz);
+
 }
 
 

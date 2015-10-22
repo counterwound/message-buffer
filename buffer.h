@@ -120,6 +120,7 @@ extern void pushMsgToBuf(tMsgObject msg, tMsgBuffer* buf);
 extern tMsgObject popMsgFromBuf(tMsgBuffer* buf);
 extern uint64_t getBufCount(tMsgBuffer* buf);
 extern bool isBufEmpty(tMsgBuffer* buf);
+extern bool isBufFull(tMsgBuffer* buf);
 
 //*****************************************************************************
 //
