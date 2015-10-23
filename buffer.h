@@ -59,6 +59,9 @@ extern "C"
 #include <stdbool.h>
 #include <stdint.h>
 
+#define kBufferOverflow		-2001
+#define kBufferUnderflow 	-2002
+
 //*****************************************************************************
 //
 //! The structure used for encapsulating all the items associated with a UART
@@ -98,6 +101,7 @@ typedef struct
     uint64_t writeIdx;
     uint64_t readIdx;
     uint64_t bufSz;
+    int8_t bufStatus;
     tMsgObject* msgBuf;
 }
 tMsgBuffer;
@@ -121,6 +125,8 @@ extern tMsgObject popMsgFromBuf(tMsgBuffer* buf);
 extern uint64_t getBufCount(tMsgBuffer* buf);
 extern bool isBufEmpty(tMsgBuffer* buf);
 extern bool isBufFull(tMsgBuffer* buf);
+extern int8_t getBufStatus(tMsgBuffer* buf);
+extern int8_t clearBufStatus(tMsgBuffer* buf);
 
 //*****************************************************************************
 //

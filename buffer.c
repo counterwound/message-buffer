@@ -62,6 +62,7 @@ void initMsgBuffer(tMsgBuffer* msgBuf, tMsgObject* bufData, const uint64_t bufSz
 	msgBuf->writeIdx = 0;
 	msgBuf->readIdx = 0;
 	msgBuf->bufSz = bufSz;
+	msgBuf->bufStatus = 0;
 	msgBuf->msgBuf = bufData;
 }
 
@@ -69,18 +70,30 @@ void pushMsgToBuf(tMsgObject msg, tMsgBuffer* buf)
 {
 	if(isBufFull(buf))
 	{
-		// TODO: error?
+		// drop oldest sample by advancing read pointer...
+		buf->readIdx++;
+
+		// then, set status to overflow, in case the caller cares about this condition
+		buf->bufStatus = kBufferOverflow;
 	}
 
 	// push the data into an offset based on the actual size of the buffer
-	buf->msgBuf[buf->writeIdx++ % buf->bufSz] = msg;
+	buf->msgBuf[buf->writeIdx % buf->bufSz] = msg;
+	buf->writeIdx++;
 }
 
 tMsgObject popMsgFromBuf(tMsgBuffer* buf)
 {
 	if(isBufEmpty(buf))
 	{
-		// TODO: error?
+		tMsgObject retObj;
+
+		// nothing to drop, so just set status...
+		buf->bufStatus = kBufferUnderflow;
+
+		// then, return empty message object
+		populateMsgObject(&retObj, 0x00, 0x00, 0);
+		return retObj;
 	}
 
 	// pop data from an offset based on the actual size of the buffer
@@ -101,6 +114,16 @@ bool isBufFull(tMsgBuffer* buf)
 {
 	return (getBufCount(buf) >= buf->bufSz);
 
+}
+
+int8_t getBufStatus(tMsgBuffer* buf)
+{
+	return buf->bufStatus;
+}
+
+int8_t clearBufStatus(tMsgBuffer* buf)
+{
+	buf->bufStatus = 0;
 }
 
 
