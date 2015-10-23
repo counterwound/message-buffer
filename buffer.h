@@ -59,8 +59,8 @@ extern "C"
 #include <stdbool.h>
 #include <stdint.h>
 
-#define kBufferOverflow		-2001
-#define kBufferUnderflow 	-2002
+#define kBufferOverflow		-11
+#define kBufferUnderflow 	-12
 
 //*****************************************************************************
 //
