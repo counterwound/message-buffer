@@ -113,7 +113,6 @@ bool isBufEmpty(tMsgBuffer* buf)
 bool isBufFull(tMsgBuffer* buf)
 {
 	return (getBufCount(buf) >= buf->bufSz);
-
 }
 
 int8_t getBufStatus(tMsgBuffer* buf)
@@ -124,6 +123,7 @@ int8_t getBufStatus(tMsgBuffer* buf)
 int8_t clearBufStatus(tMsgBuffer* buf)
 {
 	buf->bufStatus = 0;
+	return;
 }
 
 
