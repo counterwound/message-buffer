@@ -120,7 +120,7 @@ int8_t getBufStatus(tMsgBuffer* buf)
 	return buf->bufStatus;
 }
 
-int8_t clearBufStatus(tMsgBuffer* buf)
+void clearBufStatus(tMsgBuffer* buf)
 {
 	buf->bufStatus = 0;
 	return;

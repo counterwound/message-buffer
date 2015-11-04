@@ -126,7 +126,7 @@ extern uint64_t getBufCount(tMsgBuffer* buf);
 extern bool isBufEmpty(tMsgBuffer* buf);
 extern bool isBufFull(tMsgBuffer* buf);
 extern int8_t getBufStatus(tMsgBuffer* buf);
-extern int8_t clearBufStatus(tMsgBuffer* buf);
+extern void clearBufStatus(tMsgBuffer* buf);
 
 //*****************************************************************************
 //
