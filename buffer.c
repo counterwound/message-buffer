@@ -66,7 +66,7 @@ void initMsgBuffer(tMsgBuffer* msgBuf, tMsgObject* bufData, const uint64_t bufSz
 	msgBuf->msgBuf = bufData;
 }
 
-void pushMsgToBuf(tMsgObject msg, tMsgBuffer* buf)
+int8_t pushMsgToBuf(tMsgBuffer* buf, tMsgObject msg);
 {
 	if(isBufFull(buf))
 	{
@@ -80,24 +80,26 @@ void pushMsgToBuf(tMsgObject msg, tMsgBuffer* buf)
 	// push the data into an offset based on the actual size of the buffer
 	buf->msgBuf[buf->writeIdx % buf->bufSz] = msg;
 	buf->writeIdx++;
+	
+	return getBufStatus(buf);
 }
 
-tMsgObject popMsgFromBuf(tMsgBuffer* buf)
+int8_t popMsgFromBuf(tMsgBuffer* buf, tMsgObject* msgRet)
 {
 	if(isBufEmpty(buf))
 	{
-		tMsgObject retObj;
-
 		// nothing to drop, so just set status...
 		buf->bufStatus = kBufferUnderflow;
 
 		// then, return empty message object
-		populateMsgObject(&retObj, 0x00, 0x00, 0);
-		return retObj;
+		populateMsgObject(&msgRet, 0x00, 0x00, 0);
+		return buf->bufStatus;
 	}
-
+	
 	// pop data from an offset based on the actual size of the buffer
-	return buf->msgBuf[buf->readIdx++ % buf->bufSz];
+	*msgRet = buf->msgBuf[buf->readIdx++ % buf->bufSz];
+	
+	return getBufStatus(buf);
 }
 
 extern uint64_t getBufCount(tMsgBuffer* buf)
