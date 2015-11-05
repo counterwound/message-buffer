@@ -66,7 +66,7 @@ void initMsgBuffer(tMsgBuffer* msgBuf, tMsgObject* bufData, const uint64_t bufSz
 	msgBuf->msgBuf = bufData;
 }
 
-int8_t pushMsgToBuf(tMsgBuffer* buf, tMsgObject msg);
+int8_t pushMsgToBuf(tMsgBuffer* buf, tMsgObject msg)
 {
 	if(isBufFull(buf))
 	{
