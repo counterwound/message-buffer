@@ -92,7 +92,7 @@ int8_t popMsgFromBuf(tMsgBuffer* buf, tMsgObject* msgRet)
 		buf->bufStatus = kBufferUnderflow;
 
 		// then, return empty message object
-		populateMsgObject(&msgRet, 0x00, 0x00, 0);
+		populateMsgObject(msgRet, 0x00, 0x00, 0);
 		return buf->bufStatus;
 	}
 	
