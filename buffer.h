@@ -78,10 +78,12 @@ extern "C"
 //! This indicates that a message object has no flags set.
 //
 #define BUF_OBJ_NO_FLAGS        0x00000000
+
 //
 //! This indicates that a pop was attempted when the buffer was empty.
 //
 #define BUF_OBJ_EMPTY_POP		0x00000004
+
 //
 //! This indicates data data was lost during a push.  This occurs if the buffer
 //! was full when a push was attempted.  The oldest data is overwritten with
