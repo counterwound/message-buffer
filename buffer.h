@@ -59,13 +59,40 @@ extern "C"
 #include <stdbool.h>
 #include <stdint.h>
 
+//*****************************************************************************
+//
+// Miscellaneous defines for Buffer types
+//
+//*****************************************************************************
+//*****************************************************************************
+//
+// These are the flags used by the ttMsgObjectMsgObject.ui32Flags value when calling
+// the popMsgFromBuf() and pushMsgToBuf() functions.
+//
+//*****************************************************************************
+
 #define kBufferOverflow		-11
 #define kBufferUnderflow 	-12
 
+//
+//! This indicates that a message object has no flags set.
+//
+#define BUF_OBJ_NO_FLAGS        0x00000000
+//
+//! This indicates that a pop was attempted when the buffer was empty.
+//
+#define BUF_OBJ_EMPTY_POP		0x00000004
+//
+//! This indicates data data was lost during a push.  This occurs if the buffer
+//! was full when a push was attempted.  The oldest data is overwritten with
+//! new data.
+//
+#define BUF_OBJ_DATA_LOST       0x00000100
+
 //*****************************************************************************
 //
-//! The structure used for encapsulating all the items associated with a UART
-//! message object
+//! The structure used for encapsulating all the items associated with a
+//! message object.
 //
 //*****************************************************************************
 typedef struct
@@ -98,11 +125,33 @@ void populateMsgObject(tMsgObject* msgObj, uint32_t msgID, uint8_t* msgData, uin
 
 typedef struct
 {
-    uint64_t writeIdx;
-    uint64_t readIdx;
-    uint64_t bufSz;
+
+	//
+		//! The index for the last read in the buffer.
+		//
+	    uint64_t writeIdx;
+
+	    //
+		//! The index for the last write to the buffer.
+		//
+	    uint64_t readIdx;
+
+	    //
+		//! This value holds various status flags and settings.
+		//
+//		uint32_t ui32Flags;
+
+	    //
+		//! This value is the number of tMsgObject's in the the buffer can store.
+		//
+	    uint64_t bufSz;
+
+	    //
+	    //! This is a pointer to the buffer object's data.
+	    //
+	    tMsgObject* msgBuf;
+
     int8_t bufStatus;
-    tMsgObject* msgBuf;
 }
 tMsgBuffer;
 
