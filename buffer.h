@@ -153,7 +153,7 @@ typedef struct
 
     int8_t bufStatus;
 }
-tMsgBuffer;
+tBufObject;
 
 //*****************************************************************************
 //
@@ -161,7 +161,7 @@ tMsgBuffer;
 //
 //*****************************************************************************
 
-extern void initMsgBuffer(tMsgBuffer* msgBuf, tMsgObject* bufData, const uint64_t bufSz);
+extern void initMsgBuffer(tBufObject* msgBuf, tMsgObject* bufData, const uint64_t bufSz);
 
 //*****************************************************************************
 //
@@ -169,13 +169,13 @@ extern void initMsgBuffer(tMsgBuffer* msgBuf, tMsgObject* bufData, const uint64_
 //
 //*****************************************************************************
 
-extern int8_t pushMsgToBuf(tMsgBuffer* buf, tMsgObject msg);
-extern int8_t popMsgFromBuf(tMsgBuffer* buf, tMsgObject* msgRet);
-extern uint64_t getBufCount(tMsgBuffer* buf);
-extern bool isBufEmpty(tMsgBuffer* buf);
-extern bool isBufFull(tMsgBuffer* buf);
-extern int8_t getBufStatus(tMsgBuffer* buf);
-extern void clearBufStatus(tMsgBuffer* buf);
+extern int8_t pushMsgToBuf(tBufObject* buf, tMsgObject msg);
+extern int8_t popMsgFromBuf(tBufObject* buf, tMsgObject* msgRet);
+extern uint64_t getBufCount(tBufObject* buf);
+extern bool isBufEmpty(tBufObject* buf);
+extern bool isBufFull(tBufObject* buf);
+extern int8_t getBufStatus(tBufObject* buf);
+extern void clearBufStatus(tBufObject* buf);
 
 //*****************************************************************************
 //

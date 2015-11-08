@@ -57,7 +57,7 @@ void populateMsgObject(tMsgObject* msgObj, uint32_t msgID, uint8_t* msgData, uin
 	}
 }
 
-void initMsgBuffer(tMsgBuffer* msgBuf, tMsgObject* bufData, const uint64_t bufSz)
+void initMsgBuffer(tBufObject* msgBuf, tMsgObject* bufData, const uint64_t bufSz)
 {
 	msgBuf->writeIdx = 0;
 	msgBuf->readIdx = 0;
@@ -66,7 +66,7 @@ void initMsgBuffer(tMsgBuffer* msgBuf, tMsgObject* bufData, const uint64_t bufSz
 	msgBuf->msgBuf = bufData;
 }
 
-int8_t pushMsgToBuf(tMsgBuffer* buf, tMsgObject msg)
+int8_t pushMsgToBuf(tBufObject* buf, tMsgObject msg)
 {
 	if(isBufFull(buf))
 	{
@@ -84,7 +84,7 @@ int8_t pushMsgToBuf(tMsgBuffer* buf, tMsgObject msg)
 	return getBufStatus(buf);
 }
 
-int8_t popMsgFromBuf(tMsgBuffer* buf, tMsgObject* msgRet)
+int8_t popMsgFromBuf(tBufObject* buf, tMsgObject* msgRet)
 {
 	if(isBufEmpty(buf))
 	{
@@ -102,27 +102,27 @@ int8_t popMsgFromBuf(tMsgBuffer* buf, tMsgObject* msgRet)
 	return getBufStatus(buf);
 }
 
-extern uint64_t getBufCount(tMsgBuffer* buf)
+extern uint64_t getBufCount(tBufObject* buf)
 {
 	return (buf->writeIdx - buf->readIdx);
 }
 
-bool isBufEmpty(tMsgBuffer* buf)
+bool isBufEmpty(tBufObject* buf)
 {
 	return (0 == getBufCount(buf));
 }
 
-bool isBufFull(tMsgBuffer* buf)
+bool isBufFull(tBufObject* buf)
 {
 	return (getBufCount(buf) >= buf->bufSz);
 }
 
-int8_t getBufStatus(tMsgBuffer* buf)
+int8_t getBufStatus(tBufObject* buf)
 {
 	return buf->bufStatus;
 }
 
-void clearBufStatus(tMsgBuffer* buf)
+void clearBufStatus(tBufObject* buf)
 {
 	buf->bufStatus = 0;
 	return;
