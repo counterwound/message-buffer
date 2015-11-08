@@ -82,7 +82,13 @@ extern "C"
 //
 //! This indicates that a pop was attempted when the buffer was empty.
 //
-#define BUF_OBJ_EMPTY_POP		0x00000004
+#define BUF_OBJ_EMPTY_POP		0x00000001
+
+//
+//! This indicates a push or pop contained the wrong length for the buffer
+//! object data width.
+//
+#define BUF_OBJ_DIM_ERROR		0x00000002
 
 //
 //! This indicates data data was lost during a push.  This occurs if the buffer
@@ -116,42 +122,40 @@ tMsgObject;
 //! Fill data and MsgID, given the raw data
 //
 //*****************************************************************************
-
-void populateMsgObject(tMsgObject* msgObj, uint32_t msgID, uint8_t* msgData, uint32_t len);
+void populateMsgObject(tMsgObject* msgObj, uint32_t msgID,
+		uint8_t* msgData, uint32_t len);
 
 //*****************************************************************************
 //
 //! The structure to represent and track contents of a buffer of messages
 //
 //*****************************************************************************
-
 typedef struct
 {
+	//
+	//! The index for the last read in the buffer.
+	//
+	uint64_t writeIdx;
 
 	//
-		//! The index for the last read in the buffer.
-		//
-	    uint64_t writeIdx;
+	//! The index for the last write to the buffer.
+	//
+	uint64_t readIdx;
 
-	    //
-		//! The index for the last write to the buffer.
-		//
-	    uint64_t readIdx;
+	//
+	//! This value holds various status flags and settings.
+	//
+	uint32_t ui32Flags;
 
-	    //
-		//! This value holds various status flags and settings.
-		//
-//		uint32_t ui32Flags;
+	//
+	//! This value is the number of tMsgObject's in the the buffer can store.
+	//
+	uint64_t bufSz;
 
-	    //
-		//! This value is the number of tMsgObject's in the the buffer can store.
-		//
-	    uint64_t bufSz;
-
-	    //
-	    //! This is a pointer to the buffer object's data.
-	    //
-	    tMsgObject* msgBuf;
+	//
+	//! This is a pointer to the buffer object's data.
+	//
+	tMsgObject* msgBuf;
 
     int8_t bufStatus;
 }
