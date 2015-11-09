@@ -62,6 +62,7 @@ void initMsgBuffer(tBufObject* msgBuf, tMsgObject* bufData, const uint64_t bufSz
 	msgBuf->writeIdx = 0;
 	msgBuf->readIdx = 0;
 	msgBuf->bufSz = bufSz;
+	msgBuf->ui32Flags = BUF_OBJ_NO_FLAGS;
 	msgBuf->bufStatus = 0;
 	msgBuf->msgBuf = bufData;
 }
@@ -75,6 +76,7 @@ int8_t pushMsgToBuf(tBufObject* buf, tMsgObject msg)
 
 		// then, set status to overflow, in case the caller cares about this condition
 		buf->bufStatus = kBufferOverflow;
+		buf->ui32Flags |= BUF_OBJ_DATA_LOST;
 	}
 
 	// push the data into an offset based on the actual size of the buffer
@@ -90,6 +92,7 @@ int8_t popMsgFromBuf(tBufObject* buf, tMsgObject* msgRet)
 	{
 		// nothing to drop, so just set status...
 		buf->bufStatus = kBufferUnderflow;
+		buf->ui32Flags |= BUF_OBJ_EMPTY_POP;
 
 		// then, return empty message object
 		populateMsgObject(msgRet, 0x00, 0x00, 0);
@@ -125,6 +128,7 @@ int8_t getBufStatus(tBufObject* buf)
 void clearBufStatus(tBufObject* buf)
 {
 	buf->bufStatus = 0;
+	buf->ui32Flags = BUF_OBJ_NO_FLAGS;
 	return;
 }
 
