@@ -130,12 +130,12 @@ void populateMsgObject(tMsgObject* msgObj, uint32_t msgID,
 typedef struct
 {
 	//
-	//! The index for the last read in the buffer.
+	//! The index for the last write to the buffer.
 	//
 	uint64_t writeIdx;
 
 	//
-	//! The index for the last write to the buffer.
+	//! The index for the last read in the buffer.
 	//
 	uint64_t readIdx;
 
