@@ -63,11 +63,10 @@ void initMsgBuffer(tBufObject* msgBuf, tMsgObject* bufData, const uint64_t bufSz
 	msgBuf->readIdx = 0;
 	msgBuf->bufSz = bufSz;
 	msgBuf->ui32Flags = BUF_OBJ_NO_FLAGS;
-	msgBuf->bufStatus = 0;
 	msgBuf->msgBuf = bufData;
 }
 
-int8_t pushMsgToBuf(tBufObject* buf, tMsgObject msg)
+uint32_t pushMsgToBuf(tBufObject* buf, tMsgObject msg)
 {
 	if(isBufFull(buf))
 	{
@@ -75,7 +74,6 @@ int8_t pushMsgToBuf(tBufObject* buf, tMsgObject msg)
 		buf->readIdx++;
 
 		// then, set status to overflow, in case the caller cares about this condition
-		buf->bufStatus = kBufferOverflow;
 		buf->ui32Flags |= BUF_OBJ_DATA_LOST;
 	}
 
@@ -86,12 +84,11 @@ int8_t pushMsgToBuf(tBufObject* buf, tMsgObject msg)
 	return getBufStatus(buf);
 }
 
-int8_t popMsgFromBuf(tBufObject* buf, tMsgObject* msgRet)
+uint32_t popMsgFromBuf(tBufObject* buf, tMsgObject* msgRet)
 {
 	if(isBufEmpty(buf))
 	{
 		// nothing to drop, so just set status...
-		buf->bufStatus = kBufferUnderflow;
 		buf->ui32Flags |= BUF_OBJ_EMPTY_POP;
 
 		// then, return empty message object
@@ -120,14 +117,13 @@ bool isBufFull(tBufObject* buf)
 	return (getBufCount(buf) >= buf->bufSz);
 }
 
-int8_t getBufStatus(tBufObject* buf)
+uint32_t getBufStatus(tBufObject* buf)
 {
-	return buf->bufStatus;
+	return buf->ui32Flags;
 }
 
 void clearBufStatus(tBufObject* buf)
 {
-	buf->bufStatus = 0;
 	buf->ui32Flags = BUF_OBJ_NO_FLAGS;
 	return;
 }
