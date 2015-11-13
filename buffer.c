@@ -2,7 +2,7 @@
 //
 // buffer.c - Driver for the Buffer module.
 //
-// Copyright (c) 2015 Sevun Scientific, Inc..  All rights reserved.
+// Copyright (c) 2015 Counterwound Labs, Inc.  All rights reserved.
 // Software License Agreement
 // 
 //   Redistribution and use in source and binary forms, with or without
@@ -17,7 +17,7 @@
 //   documentation and/or other materials provided with the  
 //   distribution.
 // 
-//   Neither the name of Sevun Scientific, Inc. nor the names of
+//   Neither the name of Counterwound Labs, Inc. nor the names of
 //   its contributors may be used to endorse or promote products derived
 //   from this software without specific prior written permission.
 // 
@@ -46,86 +46,85 @@
 #include <stdint.h>
 #include "buffer.h"
 
-void populateMsgObject(tMsgObject* msgObj, uint32_t msgID, uint8_t* msgData, uint32_t len)
+void stageMsgObject(tMsgObject* psMsgObject, uint32_t ui32MsgID, uint8_t* pui8MsgData, uint32_t ui32MsgLen)
 {
-	uint32_t i;
+	uint32_t uIdx;
 
-	msgObj->ui32MsgID = msgID;
-	for(i = 0; i < len; i++)
+	psMsgObject->ui32MsgID = ui32MsgID;
+	for(uIdx = 0; uIdx < ui32MsgLen; uIdx++)
 	{
-		msgObj->pui8MsgData[i] = msgData[i];
+		psMsgObject->pui8MsgData[uIdx] = pui8MsgData[uIdx];
 	}
 }
 
-void initMsgBuffer(tBufObject* msgBuf, tMsgObject* bufData, const uint64_t bufSz)
+void initMsgBuffer(tBufObject* psBuffer, tMsgObject* psMessages, const uint64_t ui64BufferDepth)
 {
-	msgBuf->writeIdx = 0;
-	msgBuf->readIdx = 0;
-	msgBuf->bufSz = bufSz;
-	msgBuf->ui32Flags = BUF_OBJ_NO_FLAGS;
-	msgBuf->msgBuf = bufData;
+	psBuffer->ui64WriteIdx = 0;
+	psBuffer->ui64ReadIdx = 0;
+	psBuffer->ui64BufferDepth = ui64BufferDepth;
+	psBuffer->ui32Flags = BUF_OBJ_NO_FLAGS;
+	psBuffer->psMessages = psMessages;
 }
 
-uint32_t pushMsgToBuf(tBufObject* buf, tMsgObject msg)
+uint32_t pushMsgToBuf(tBufObject* psBuffer, tMsgObject psMsgObject)
 {
-	if(isBufFull(buf))
+	if(isBufFull(psBuffer))
 	{
 		// drop oldest sample by advancing read pointer...
-		buf->readIdx++;
+		psBuffer->ui64ReadIdx++;
 
 		// then, set status to overflow, in case the caller cares about this condition
-		buf->ui32Flags |= BUF_OBJ_DATA_LOST;
+		psBuffer->ui32Flags |= BUF_OBJ_DATA_LOST;
 	}
 
 	// push the data into an offset based on the actual size of the buffer
-	buf->msgBuf[buf->writeIdx % buf->bufSz] = msg;
-	buf->writeIdx++;
+	psBuffer->psMessages[psBuffer->ui64WriteIdx % psBuffer->ui64BufferDepth] = psMsgObject;
+	psBuffer->ui64WriteIdx++;
 	
-	return getBufStatus(buf);
+	return getBufStatus(psBuffer);
 }
 
-uint32_t popMsgFromBuf(tBufObject* buf, tMsgObject* msgRet)
+uint32_t popMsgFromBuf(tBufObject* psBuffer, tMsgObject* psMsgObject)
 {
-	if(isBufEmpty(buf))
+	if(isBufEmpty(psBuffer))
 	{
 		// nothing to drop, so just set status...
-		buf->ui32Flags |= BUF_OBJ_EMPTY_POP;
+		psBuffer->ui32Flags |= BUF_OBJ_EMPTY_POP;
 
 		// then, return empty message object
-		populateMsgObject(msgRet, 0x00, 0x00, 0);
-		return buf->bufStatus;
+		stageMsgObject(psMsgObject, 0x00, 0x00, 0);
+		return psBuffer->ui32Flags;
 	}
 	
-	// pop data from an offset based on the actual size of the buffer
-	*msgRet = buf->msgBuf[buf->readIdx++ % buf->bufSz];
+	// pop data from an offset based on the actual size of the psBufferfer
+	*psMsgObject = psBuffer->psMessages[psBuffer->ui64ReadIdx++ % psBuffer->ui64BufferDepth];
 	
-	return getBufStatus(buf);
+	return getBufStatus(psBuffer);
 }
 
-extern uint64_t getBufCount(tBufObject* buf)
+extern uint64_t getBufCount(tBufObject* psBuffer)
 {
-	return (buf->writeIdx - buf->readIdx);
+	return (psBuffer->ui64WriteIdx - psBuffer->ui64ReadIdx);
 }
 
-bool isBufEmpty(tBufObject* buf)
+bool isBufEmpty(tBufObject* psBuffer)
 {
-	return (0 == getBufCount(buf));
+	return (0 == getBufCount(psBuffer));
 }
 
-bool isBufFull(tBufObject* buf)
+bool isBufFull(tBufObject* psBuffer)
 {
-	return (getBufCount(buf) >= buf->bufSz);
+	return (getBufCount(psBuffer) >= psBuffer->ui64BufferDepth);
 }
 
-uint32_t getBufStatus(tBufObject* buf)
+uint32_t getBufStatus(tBufObject* psBuffer)
 {
-	return buf->ui32Flags;
+	return psBuffer->ui32Flags;
 }
 
-void clearBufStatus(tBufObject* buf)
+void clearBufStatus(tBufObject* psBuffer)
 {
-	buf->ui32Flags = BUF_OBJ_NO_FLAGS;
-	return;
+	psBuffer->ui32Flags = BUF_OBJ_NO_FLAGS;
 }
 
 

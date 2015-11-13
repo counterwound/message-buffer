@@ -2,7 +2,7 @@
 //
 // buffer.h - Defines and Macros for the BUFFER controller.
 //
-// Copyright (c) 2015 Sevun Scientific, Inc..  All rights reserved.
+// Copyright (c) 2015 Counterwound Labs, Inc.  All rights reserved.
 // Software License Agreement
 // 
 //   Redistribution and use in source and binary forms, with or without
@@ -17,7 +17,7 @@
 //   documentation and/or other materials provided with the  
 //   distribution.
 //
-//   Neither the name of Sevun Scientific, Inc. nor the names of
+//   Neither the name of Counterwound Labs, Inc. nor the names of
 //   its contributors may be used to endorse or promote products derived
 //   from this software without specific prior written permission.
 // 
@@ -83,9 +83,9 @@ extern "C"
 
 //
 //! This indicates a push or pop contained the wrong length for the buffer
-//! object data width.
+//! object data width.  NOT CURRENTLY IMPLEMENTED
 //
-#define BUF_OBJ_DIM_ERROR		0x00000002
+//#define BUF_OBJ_DIM_ERROR		0x00000002
 
 //
 //! This indicates data data was lost during a push.  This occurs if the buffer
@@ -116,14 +116,6 @@ tMsgObject;
 
 //*****************************************************************************
 //
-//! Fill data and MsgID, given the raw data
-//
-//*****************************************************************************
-void populateMsgObject(tMsgObject* msgObj, uint32_t msgID,
-		uint8_t* msgData, uint32_t len);
-
-//*****************************************************************************
-//
 //! The structure to represent and track contents of a buffer of messages
 //
 //*****************************************************************************
@@ -132,12 +124,12 @@ typedef struct
 	//
 	//! The index for the last write to the buffer.
 	//
-	uint64_t writeIdx;
+	uint64_t ui64WriteIdx;
 
 	//
 	//! The index for the last read in the buffer.
 	//
-	uint64_t readIdx;
+	uint64_t ui64ReadIdx;
 
 	//
 	//! This value holds various status flags and settings.
@@ -147,16 +139,28 @@ typedef struct
 	//
 	//! This value is the number of tMsgObject's in the the buffer can store.
 	//
-	uint64_t bufSz;
+	uint64_t ui64BufferDepth;
+
+	//
+	//! This value is the width in bytes of tMsgObject's.
+	//! NOT CURRENTLY IMPLEMENTED
+	//
+	//uint64_t ui64BufferWidth;
 
 	//
 	//! This is a pointer to the buffer object's data.
 	//
-	tMsgObject* msgBuf;
-
-    int8_t bufStatus;
+	tMsgObject* psMessages;
 }
 tBufObject;
+
+//*****************************************************************************
+//
+//! Fill data and MsgID, given the raw data
+//
+//*****************************************************************************
+void stageMsgObject(tMsgObject* psMsgObject, uint32_t ui32MsgID,
+		uint8_t* pui8MsgData, uint32_t ui32MsgLen);
 
 //*****************************************************************************
 //
@@ -164,7 +168,7 @@ tBufObject;
 //
 //*****************************************************************************
 
-extern void initMsgBuffer(tBufObject* msgBuf, tMsgObject* bufData, const uint64_t bufSz);
+extern void initMsgBuffer(tBufObject* psBuffer, tMsgObject* psMsgObject, const uint64_t ui64BufferDepth);
 
 //*****************************************************************************
 //
@@ -172,13 +176,13 @@ extern void initMsgBuffer(tBufObject* msgBuf, tMsgObject* bufData, const uint64_
 //
 //*****************************************************************************
 
-extern uint32_t pushMsgToBuf(tBufObject* buf, tMsgObject msg);
-extern uint32_t popMsgFromBuf(tBufObject* buf, tMsgObject* msgRet);
-extern uint64_t getBufCount(tBufObject* buf);
-extern bool isBufEmpty(tBufObject* buf);
-extern bool isBufFull(tBufObject* buf);
-extern uint32_t getBufStatus(tBufObject* buf);
-extern void clearBufStatus(tBufObject* buf);
+extern uint32_t pushMsgToBuf(tBufObject* psBuffer, tMsgObject psMsgObject);
+extern uint32_t popMsgFromBuf(tBufObject* psBuffer, tMsgObject* psMsgObject);
+extern uint64_t getBufCount(tBufObject* psBuffer);
+extern bool isBufEmpty(tBufObject* psBuffer);
+extern bool isBufFull(tBufObject* psBuffer);
+extern uint32_t getBufStatus(tBufObject* psBuffer);
+extern void clearBufStatus(tBufObject* psBuffer);
 
 //*****************************************************************************
 //
