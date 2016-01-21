@@ -81,6 +81,16 @@ uint32_t pushMsgToBuf(tBufObject* psBuffer, tMsgObject psMsgObject)
 	psBuffer->psMessages[psBuffer->ui64WriteIdx % psBuffer->ui64BufferDepth] = psMsgObject;
 	psBuffer->ui64WriteIdx++;
 	
+	if(psBuffer->ui32Flags & BUF_OBJ_EMPTY_POP)
+	{
+		// if the error bit for popping an empty buffer
+		// was previously set, it shouldn't be any more,
+		// because we just pushed a message.  since that
+		// succeeded, we know that the buffer is not
+		// empty now.
+		psBuffer->ui32Flags &= ~(BUF_OBJ_EMPTY_POP);
+	}
+
 	return getBufStatus(psBuffer);
 }
 
@@ -99,6 +109,19 @@ uint32_t popMsgFromBuf(tBufObject* psBuffer, tMsgObject* psMsgObject)
 	// pop data from an offset based on the actual size of the psBufferfer
 	*psMsgObject = psBuffer->psMessages[psBuffer->ui64ReadIdx++ % psBuffer->ui64BufferDepth];
 	
+	if((psBuffer->ui32Flags & BUF_OBJ_DATA_LOST) && !(isBufFull(psBuffer)))
+	{
+		// if the error bit for pushing to a full
+		// buffer was previously set, popping one
+		// *might* have corrected that condition.
+		// we can surmise here that if the buffer
+		// is not full, then data will not be lost
+		// on the next push, so we will just count on
+		// that condition being tracked by the caller
+		// when it occurs in push operations
+		psBuffer->ui32Flags &= ~(BUF_OBJ_DATA_LOST);
+	}
+
 	return getBufStatus(psBuffer);
 }
 
